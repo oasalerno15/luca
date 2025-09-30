@@ -1,11 +1,11 @@
 'use client';
 
 import Hero from "@/components/ui/neural-network-hero";
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { supabase, createProfile } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,7 +68,7 @@ function AboutUsSection() {
         </h2>
         
         <p ref={descRef} className="max-w-4xl text-center text-lg font-light leading-relaxed tracking-tight text-white/75 sm:text-xl md:text-2xl">
-          We're passionate educators dedicated to unlocking each student's potential through personalized learning experiences that foster curiosity, build confidence, and inspire academic excellence.
+          We&apos;re passionate educators dedicated to unlocking each student&apos;s potential through personalized learning experiences that foster curiosity, build confidence, and inspire academic excellence.
         </p>
 
         {/* Content Grid */}
@@ -397,10 +397,10 @@ function RegistrationSection() {
       console.log('Registration completed successfully!');
       clearTimeout(timeoutId);
       setIsSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration error:', err);
       clearTimeout(timeoutId);
-      setError(err.message || 'An error occurred during registration');
+      setError((err as Error).message || 'An error occurred during registration');
     } finally {
       setIsSubmitting(false);
     }
