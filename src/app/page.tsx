@@ -68,7 +68,7 @@ function AboutUsSection() {
         </h2>
         
         <p ref={descRef} className="max-w-4xl text-center text-lg font-light leading-relaxed tracking-tight text-white/75 sm:text-xl md:text-2xl">
-          We&apos;re passionate educators dedicated to unlocking each student&apos;s potential through personalized learning experiences that foster curiosity, build confidence, and inspire academic excellence.
+          We are a mission-driven integrator of learning, built on firsthand experience serving low-income communities, students with disabilities, and audiences at ASTC museums. Our work is grounded in equity, access, and deep respect for mathematical thinking. We believe every student, regardless of background or learning profile, deserves the opportunity to learn subjects through a mathematical problem-solving lens.
         </p>
 
         {/* Content Grid */}
@@ -77,11 +77,17 @@ function AboutUsSection() {
           <div ref={missionRef} className="space-y-8">
             <h3 className="text-3xl font-extralight text-white text-left">Our Mission</h3>
             <p className="text-white/80 font-light leading-relaxed text-lg text-left">
-              At Tutoring Co., we believe that every student has untapped potential waiting to be discovered. Our mission is to bridge the gap between where students are and where they aspire to be, providing not just academic support, but mentorship, encouragement, and the tools necessary for lifelong learning.
+              To further the world of math by bridging gaps in opportunity, elevating underrepresented learners, and making tutoring accessible through compassionate mentorship.
             </p>
             <p className="text-white/80 font-light leading-relaxed text-lg text-left">
-              We are committed to creating an inclusive, supportive environment where students feel empowered to ask questions, make mistakes, and grow from every challenge they encounter.
+              Drawing from decades of direct work in classrooms, community settings, and museum outreach, we aim to:
             </p>
+            <ul className="text-white/80 font-light leading-relaxed text-base text-left space-y-3 list-disc list-inside">
+              <li>Empower low-income students with rigorous, joyful math education they might otherwise never receive</li>
+              <li>Design and adapt instruction for learners with Down syndrome, helping them engage with number, pattern, and logic in meaningful ways</li>
+              <li>Leverage our experience at MoMath to blend creativity, play, and theory — changing how math is experienced</li>
+              <li>Advocate for inclusion, equity, and accessibility in all educational spaces</li>
+            </ul>
           </div>
 
           {/* Placeholder Image */}
@@ -146,7 +152,7 @@ function CoreValuesSection() {
     <section ref={sectionRef} className="relative h-screen w-screen overflow-hidden bg-black">
       <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-16 px-6 text-center md:px-10 lg:px-16">
         <h2 ref={titleRef} className="text-5xl font-extralight leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
-          Our Core Values
+          Core Beliefs & Values
         </h2>
 
         {/* Content Grid */}
@@ -161,26 +167,26 @@ function CoreValuesSection() {
           </div>
 
           {/* Core Values */}
-          <div ref={valuesRef} className="grid grid-cols-2 gap-8">
-            <div className="text-center space-y-4">
-              <div className="text-4xl mb-4">🎯</div>
-              <h4 className="text-xl font-light text-white mb-3">Excellence</h4>
-              <p className="text-white/75 font-light text-sm leading-relaxed">We strive for excellence in everything we do, from our teaching methods to our student relationships.</p>
+          <div ref={valuesRef} className="space-y-6">
+            <div className="space-y-3">
+              <h4 className="text-xl font-light text-white">Equity & Access</h4>
+              <p className="text-white/75 font-light text-sm leading-relaxed">We believe math should belong to everyone. We center voices and experiences too often left out of the mathematical conversation.</p>
             </div>
-            <div className="text-center space-y-4">
-              <div className="text-4xl mb-4">🤝</div>
-              <h4 className="text-xl font-light text-white mb-3">Integrity</h4>
-              <p className="text-white/75 font-light text-sm leading-relaxed">We operate with complete honesty and transparency, building trust through consistent actions.</p>
+            <div className="space-y-3">
+              <h4 className="text-xl font-light text-white">Empathy & Respect for Learners</h4>
+              <p className="text-white/75 font-light text-sm leading-relaxed">Every student comes with unique strengths, backgrounds, and challenges. We adapt, we listen, we grow alongside them.</p>
             </div>
-            <div className="text-center space-y-4">
-              <div className="text-4xl mb-4">💡</div>
-              <h4 className="text-xl font-light text-white mb-3">Innovation</h4>
-              <p className="text-white/75 font-light text-sm leading-relaxed">We embrace modern teaching techniques and technology to create engaging experiences.</p>
+            <div className="space-y-3">
+              <h4 className="text-xl font-light text-white">Evidence + Innovation</h4>
+              <p className="text-white/75 font-light text-sm leading-relaxed">Our practices are rooted both in research and on-the-ground feedback. We experiment, refine, iterate.</p>
             </div>
-            <div className="text-center space-y-4">
-              <div className="text-4xl mb-4">🌱</div>
-              <h4 className="text-xl font-light text-white mb-3">Growth</h4>
-              <p className="text-white/75 font-light text-sm leading-relaxed">We believe in continuous improvement, celebrating every step forward along the way.</p>
+            <div className="space-y-3">
+              <h4 className="text-xl font-light text-white">Mathematics as a Living Discipline</h4>
+              <p className="text-white/75 font-light text-sm leading-relaxed">Math is alive — full of exploration, wonder, and surprise. We reject rote drill; we invite curiosity and connection.</p>
+            </div>
+            <div className="space-y-3">
+              <h4 className="text-xl font-light text-white">Community & Collaboration</h4>
+              <p className="text-white/75 font-light text-sm leading-relaxed">Education is not done in isolation. We partner with families, schools, colleagues, and communities to amplify impact.</p>
             </div>
           </div>
         </div>
@@ -237,7 +243,7 @@ function OurApproachSection() {
     <section ref={sectionRef} className="relative h-screen w-screen overflow-hidden bg-black">
       <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-16 px-6 text-center md:px-10 lg:px-16">
         <h2 ref={titleRef} className="text-5xl font-extralight leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
-          Our Approach
+          What We Do
         </h2>
 
         {/* Content Grid */}
@@ -245,20 +251,24 @@ function OurApproachSection() {
           {/* Our Approach */}
           <div ref={approachRef} className="space-y-8 text-left">
             <div>
-              <h4 className="text-2xl font-light text-white mb-4">🎨 Personalized Learning Plans</h4>
-              <p className="text-white/75 font-light leading-relaxed">Every student is unique, which is why we create customized learning plans that address individual strengths, challenges, and learning preferences.</p>
+              <h4 className="text-2xl font-light text-white mb-4">Tailored Learning Journeys</h4>
+              <p className="text-white/75 font-light leading-relaxed">Each learner gets a path built around their interests, prior knowledge, and goals, not a one-size-fits-all curriculum.</p>
             </div>
             <div>
-              <h4 className="text-2xl font-light text-white mb-4">📊 Data-Driven Progress Tracking</h4>
-              <p className="text-white/75 font-light leading-relaxed">We use comprehensive assessment tools and regular progress evaluations to track student improvement and adjust our approach.</p>
+              <h4 className="text-2xl font-light text-white mb-4">Inclusive Design for Diverse Learners</h4>
+              <p className="text-white/75 font-light leading-relaxed">With experience working with students with learning challenges and differences, we design lessons that are structured but flexible.</p>
             </div>
             <div>
-              <h4 className="text-2xl font-light text-white mb-4">🧠 Holistic Development</h4>
-              <p className="text-white/75 font-light leading-relaxed">Beyond academic subjects, we focus on developing critical thinking skills, study strategies, time management, and confidence.</p>
+              <h4 className="text-2xl font-light text-white mb-4">Outreach & Cultural Engagement in Math</h4>
+              <p className="text-white/75 font-light leading-relaxed">Leveraging our MoMath background, we build hands-on experiences, public math exhibitions, and community-facing programs that change the narrative about who does math and how.</p>
             </div>
             <div>
-              <h4 className="text-2xl font-light text-white mb-4">👨‍👩‍👧‍👦 Family Partnership</h4>
-              <p className="text-white/75 font-light leading-relaxed">We believe successful tutoring involves collaboration with parents and families through regular updates and open communication.</p>
+              <h4 className="text-2xl font-light text-white mb-4">Data-Informed Reflection</h4>
+              <p className="text-white/75 font-light leading-relaxed">We track understanding, not just grade-level gaps. We reflect, adjust, and iterate with humility and intention.</p>
+            </div>
+            <div>
+              <h4 className="text-2xl font-light text-white mb-4">Partnership with Families & Institutions</h4>
+              <p className="text-white/75 font-light leading-relaxed">We see families as co-educators and institutions (schools, museums) as allies. Open communication, transparency, and shared goals drive our collaboration.</p>
             </div>
           </div>
 
@@ -706,6 +716,92 @@ function RegistrationSection() {
   );
 }
 
+function CallToActionSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+
+      gsap.set([titleRef.current, contentRef.current], {
+        autoAlpha: 0,
+        y: 40
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      tl.to(titleRef.current, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power3.out"
+      })
+      .to(contentRef.current, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out"
+      }, "-=0.3");
+    },
+    { scope: sectionRef }
+  );
+
+  return (
+    <section ref={sectionRef} className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center gap-12 px-6 py-20 md:px-10 lg:px-16">
+        <h2 ref={titleRef} className="text-center text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
+          Join Us
+        </h2>
+        
+        <div ref={contentRef} className="w-full max-w-4xl space-y-8">
+          <p className="text-center text-lg font-light leading-relaxed tracking-tight text-white/75 sm:text-xl">
+            Whether you&apos;re a student, caregiver, educator, or institution, we invite you to join us:
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
+              <h3 className="text-2xl font-light text-white">Experience</h3>
+              <p className="text-white/75 font-light leading-relaxed">Our math integrator services</p>
+              <a href="#register" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
+                Learn more →
+              </a>
+            </div>
+            
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
+              <h3 className="text-2xl font-light text-white">Partner</h3>
+              <p className="text-white/75 font-light leading-relaxed">With us on outreach, workshops, or exhibitions</p>
+              <a href="#contact" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
+                Get in touch →
+              </a>
+            </div>
+            
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
+              <h3 className="text-2xl font-light text-white">Support</h3>
+              <p className="text-white/75 font-light leading-relaxed">Our mission (volunteer, advocate, fund)</p>
+              <a href="/volunteer" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
+                Join us →
+              </a>
+            </div>
+          </div>
+          
+          <p className="text-center text-xl font-light leading-relaxed tracking-tight text-white mt-16">
+            Let&apos;s reshape the learning landscape, making it more equitable, joyful, and human.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FAQSection() {
   const faqSectionRef = useRef<HTMLElement | null>(null);
   const faqTitleRef = useRef<HTMLHeadingElement | null>(null);
@@ -714,36 +810,28 @@ function FAQSection() {
 
   const faqs = [
     {
+      question: "What subjects do you offer tutoring for?",
+      answer: "All major subjects: Math, Science, English, History, Foreign Languages, Computer Science, and SAT/ACT prep — with math as our central strength."
+    },
+    {
+      question: "Do you work with students who have learning differences?",
+      answer: "Yes. Our tutors have extensive experience supporting students with Down syndrome and other learning differences, using flexible and adaptive methods to meet each learner's individual needs."
+    },
+    {
+      question: "How quickly can I begin?",
+      answer: "Most students are matched with a tutor within 24–48 hours."
+    },
+    {
+      question: "Do you offer both online and in-person options?",
+      answer: "Yes. We provide flexible scheduling to meet students where they are."
+    },
+    {
       question: "How do you match students with tutors?",
       answer: "We use a comprehensive matching system that considers your academic needs, learning style, personality, and schedule preferences to pair you with the most suitable tutor from our expert network."
     },
     {
-      question: "What subjects do you offer tutoring for?",
-      answer: "We offer tutoring across all major subjects including Math, Science, English, History, Foreign Languages, Computer Science, and standardized test preparation (SAT/ACT). If you don't see your subject listed, just ask!"
-    },
-    {
-      question: "How flexible is the scheduling?",
-      answer: "Very flexible! We offer both consistent weekly sessions and as-needed scheduling. You can book sessions at times that work for your schedule, including evenings and weekends."
-    },
-    {
       question: "What if I'm not satisfied with my tutor?",
       answer: "Your satisfaction is our priority. If you're not completely happy with your tutor match, we'll find you a new one at no additional cost. We want to ensure you have the best possible learning experience."
-    },
-    {
-      question: "Do you accommodate learning disabilities?",
-      answer: "Absolutely! Many of our tutors are specially trained to work with students who have learning disabilities. We customize our approach to match your specific needs and learning accommodations."
-    },
-    {
-      question: "How much does tutoring cost?",
-      answer: "Our pricing varies based on subject, tutor expertise, and session frequency. We offer competitive rates and flexible payment options. Contact us for a personalized quote based on your specific needs."
-    },
-    {
-      question: "Can I switch between online and in-person sessions?",
-      answer: "Yes! We offer both online and in-person tutoring options. You can choose what works best for each session or stick with your preferred format throughout."
-    },
-    {
-      question: "How quickly can I get started?",
-      answer: "Usually within 24-48 hours! Once you complete our registration form, we'll match you with a tutor and can often schedule your first session within a couple of days."
     }
   ];
 
@@ -917,8 +1005,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="text-white font-light text-lg">Email</h4>
-                  <p className="text-white/75 font-light">hello@tutoringco.com</p>
-                  <p className="text-white/75 font-light">support@tutoringco.com</p>
+                  <p className="text-white/75 font-light">Luca@integratorproject.org</p>
                 </div>
               </div>
 
@@ -957,8 +1044,8 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="text-white font-light text-lg">Response Time</h4>
-                  <p className="text-white/75 font-light">Usually within 2-4 hours</p>
-                  <p className="text-white/60 font-light text-sm">We're committed to quick responses</p>
+                  <p className="text-white/75 font-light">Within 2–4 hours</p>
+                  <p className="text-white/60 font-light text-sm">Ready to get started? Let&apos;s build a path to learning — together.</p>
                 </div>
               </div>
             </div>
@@ -1032,11 +1119,18 @@ function ContactSection() {
           </div>
         </div>
 
+        {/* Footer Message */}
+        <div className="w-full max-w-4xl bg-white/5 border border-white/10 rounded-2xl p-8 mt-16">
+          <p className="text-center text-lg font-light leading-relaxed text-white/90">
+            Every learner deserves the chance to succeed. Join us in building a nation where everyone is allowed to learn successfully.
+          </p>
+        </div>
+
         {/* Footer */}
-        <div className="w-full max-w-6xl border-t border-white/10 pt-8 mt-16">
+        <div className="w-full max-w-6xl border-t border-white/10 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 font-light text-sm">
-              © 2024 Tutoring Co. All rights reserved.
+              © 2024 Luca. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a href="#" className="text-white/60 hover:text-white/80 transition-colors font-light text-sm">Privacy Policy</a>
@@ -1053,8 +1147,8 @@ export default function Home() {
   return (
     <div className="w-screen flex flex-col">
       <Hero 
-        title="Where curiosity fuels success."
-        description="A tutoring company for students who are ambitious, curious, and ready to aim higher with personalized 1-on-1 guidance every step of the way."
+        title="Advancing Learning for All"
+        description="Through Real Experience, and Real Impact — leveraging years of work with learners to transform how tutoring happens."
         ctaButtons={[
           { text: "Get started", href: "#register" },
           { text: "Find tutors", href: "/tutors" },
@@ -1064,6 +1158,7 @@ export default function Home() {
       <AboutUsSection />
       <CoreValuesSection />
       <OurApproachSection />
+      <CallToActionSection />
       <RegistrationSection />
       <FAQSection />
       <ContactSection />

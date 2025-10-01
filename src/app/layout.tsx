@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luca - Personalized Tutoring Platform",
-  description: "Where curiosity fuels success. A tutoring platform for ambitious students ready to aim higher with personalized 1-on-1 guidance.",
+  title: "Luca - Advancing Learning for All",
+  description: "Through Real Experience, and Real Impact — leveraging years of work with learners to transform how tutoring happens.",
 };
 
 export default function RootLayout({
