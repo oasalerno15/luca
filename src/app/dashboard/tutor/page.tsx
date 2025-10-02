@@ -21,6 +21,18 @@ export default function TutorDashboard() {
   const [studentUpdates, setStudentUpdates] = useState<any[]>([]);
   const [studentRequests, setStudentRequests] = useState<any[]>([]);
   const [acceptedStudents, setAcceptedStudents] = useState<any[]>([]);
+  
+  // Session logging state
+  const [logSessionTitle, setLogSessionTitle] = useState('');
+  const [logSessionSubject, setLogSessionSubject] = useState('');
+  const [logSessionDate, setLogSessionDate] = useState('');
+  const [logSessionDuration, setLogSessionDuration] = useState('');
+  const [logSessionTopics, setLogSessionTopics] = useState('');
+  const [logSessionComments, setLogSessionComments] = useState('');
+  const [logSessionHomework, setLogSessionHomework] = useState('');
+  const [logSessionNextTopics, setLogSessionNextTopics] = useState('');
+  const [logSessionRating, setLogSessionRating] = useState('');
+  const [sessionHistory, setSessionHistory] = useState<any[]>([]);
 
   useEffect(() => {
     // Get the tutor username from sessionStorage or redirect to login
@@ -98,6 +110,10 @@ export default function TutorDashboard() {
     // Load any existing updates from localStorage for this student
     const existingUpdates = JSON.parse(localStorage.getItem(`updates_${student.email}`) || '[]');
     setStudentUpdates(existingUpdates);
+    
+    // Load session history for this student
+    const existingSessions = JSON.parse(localStorage.getItem(`session_history_${student.email}`) || '[]');
+    setSessionHistory(existingSessions);
   };
 
   const handleCreateUpdate = async () => {
@@ -174,6 +190,53 @@ export default function TutorDashboard() {
     }
   };
 
+  const handleLogSession = async () => {
+    if (!selectedStudent || !logSessionTitle.trim() || !logSessionSubject.trim() || !logSessionDate || !logSessionDuration) return;
+
+    try {
+      // Create a new session log object
+      const newSessionLog = {
+        id: Date.now().toString(),
+        student_id: selectedStudent.id,
+        tutor_username: tutorUsername,
+        title: logSessionTitle,
+        subject: logSessionSubject,
+        session_date: logSessionDate,
+        duration_minutes: parseInt(logSessionDuration),
+        topics_covered: logSessionTopics,
+        comments: logSessionComments,
+        homework_assigned: logSessionHomework,
+        next_topics: logSessionNextTopics,
+        student_engagement_rating: logSessionRating ? parseInt(logSessionRating) : null,
+        logged_at: new Date().toISOString()
+      };
+
+      // Get existing session logs and add the new one
+      const existingSessionLogs = JSON.parse(localStorage.getItem(`session_history_${selectedStudent.email}`) || '[]');
+      const updatedSessionLogs = [newSessionLog, ...existingSessionLogs];
+      
+      // Save to localStorage
+      localStorage.setItem(`session_history_${selectedStudent.email}`, JSON.stringify(updatedSessionLogs));
+      setSessionHistory(updatedSessionLogs);
+
+      // Clear form
+      setLogSessionTitle('');
+      setLogSessionSubject('');
+      setLogSessionDate('');
+      setLogSessionDuration('');
+      setLogSessionTopics('');
+      setLogSessionComments('');
+      setLogSessionHomework('');
+      setLogSessionNextTopics('');
+      setLogSessionRating('');
+      
+      alert('Session logged successfully!');
+    } catch (error) {
+      console.error('Error logging session:', error);
+      alert('Error logging session. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -199,7 +262,7 @@ export default function TutorDashboard() {
       <nav className="border-b border-white/10 px-8 py-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-2xl font-light tracking-tight">
-            Tutoring Co.
+            Integrator Project
           </Link>
           <div className="flex items-center space-x-8">
             <button className="text-white/80 hover:text-white transition-colors font-light">
@@ -467,6 +530,197 @@ export default function TutorDashboard() {
                       Schedule Session
                     </button>
                   </div>
+                </div>
+
+                {/* Log Completed Session */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                  <h3 className="text-xl font-light mb-6">📝 Log Completed Session</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/60 text-sm mb-2">Session Title *</label>
+                        <input
+                          type="text"
+                          value={logSessionTitle}
+                          onChange={(e) => setLogSessionTitle(e.target.value)}
+                          placeholder="e.g., Fractions Review"
+                          className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-white/60 text-sm mb-2">Subject *</label>
+                        <input
+                          type="text"
+                          value={logSessionSubject}
+                          onChange={(e) => setLogSessionSubject(e.target.value)}
+                          placeholder="e.g., Mathematics"
+                          className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/60 text-sm mb-2">Session Date *</label>
+                        <input
+                          type="date"
+                          value={logSessionDate}
+                          onChange={(e) => setLogSessionDate(e.target.value)}
+                          className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-white/60 text-sm mb-2">Duration (minutes) *</label>
+                        <input
+                          type="number"
+                          value={logSessionDuration}
+                          onChange={(e) => setLogSessionDuration(e.target.value)}
+                          placeholder="60"
+                          min="1"
+                          max="300"
+                          className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-white/60 text-sm mb-2">Topics Covered</label>
+                      <textarea
+                        value={logSessionTopics}
+                        onChange={(e) => setLogSessionTopics(e.target.value)}
+                        placeholder="e.g., Adding fractions with different denominators, converting mixed numbers to improper fractions"
+                        rows={2}
+                        className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/60 text-sm mb-2">Session Comments & Notes</label>
+                      <textarea
+                        value={logSessionComments}
+                        onChange={(e) => setLogSessionComments(e.target.value)}
+                        placeholder="How did the session go? Any challenges or breakthroughs?"
+                        rows={3}
+                        className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/60 text-sm mb-2">Homework Assigned</label>
+                      <textarea
+                        value={logSessionHomework}
+                        onChange={(e) => setLogSessionHomework(e.target.value)}
+                        placeholder="e.g., Complete pages 45-47, practice problems 1-10"
+                        rows={2}
+                        className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/60 text-sm mb-2">Next Session Topics</label>
+                      <textarea
+                        value={logSessionNextTopics}
+                        onChange={(e) => setLogSessionNextTopics(e.target.value)}
+                        placeholder="What should we focus on next time?"
+                        rows={2}
+                        className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/60 text-sm mb-2">Student Engagement Rating (1-5)</label>
+                      <select
+                        value={logSessionRating}
+                        onChange={(e) => setLogSessionRating(e.target.value)}
+                        className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40"
+                      >
+                        <option value="">Select rating...</option>
+                        <option value="1">1 - Very Low</option>
+                        <option value="2">2 - Low</option>
+                        <option value="3">3 - Average</option>
+                        <option value="4">4 - High</option>
+                        <option value="5">5 - Excellent</option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={handleLogSession}
+                      className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-3 text-sm font-light text-white transition-colors"
+                    >
+                      Log Session
+                    </button>
+                  </div>
+                </div>
+
+                {/* Session History */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                  <h3 className="text-xl font-light mb-6">📊 Session History</h3>
+                  {sessionHistory.length > 0 ? (
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                      {sessionHistory.map((session) => (
+                        <div key={session.id} className="bg-white/5 border border-white/10 rounded-lg p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                              <h4 className="text-white font-light text-lg">{session.title}</h4>
+                              <p className="text-white/60 text-sm">{session.subject} • {new Date(session.session_date).toLocaleDateString()} • {session.duration_minutes} minutes</p>
+                            </div>
+                            {session.student_engagement_rating && (
+                              <div className="flex items-center space-x-1">
+                                <span className="text-white/60 text-sm">Rating:</span>
+                                <div className="flex">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <span
+                                      key={star}
+                                      className={`text-sm ${
+                                        star <= session.student_engagement_rating
+                                          ? 'text-yellow-400'
+                                          : 'text-white/20'
+                                      }`}
+                                    >
+                                      ★
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {session.topics_covered && (
+                            <div className="mb-3">
+                              <p className="text-white/60 text-sm mb-1">Topics Covered:</p>
+                              <p className="text-white/80 text-sm">{session.topics_covered}</p>
+                            </div>
+                          )}
+                          
+                          {session.comments && (
+                            <div className="mb-3">
+                              <p className="text-white/60 text-sm mb-1">Comments:</p>
+                              <p className="text-white/80 text-sm">{session.comments}</p>
+                            </div>
+                          )}
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            {session.homework_assigned && (
+                              <div>
+                                <p className="text-white/60 mb-1">Homework:</p>
+                                <p className="text-white/80">{session.homework_assigned}</p>
+                              </div>
+                            )}
+                            {session.next_topics && (
+                              <div>
+                                <p className="text-white/60 mb-1">Next Topics:</p>
+                                <p className="text-white/80">{session.next_topics}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <p className="text-white/40 text-xs">
+                              Logged on {new Date(session.logged_at).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-white/60">No sessions logged yet</p>
+                      <p className="text-white/40 text-sm mt-2">Complete a session and use the form above to log it</p>
+                    </div>
+                  )}
                 </div>
               </>
             ) : (

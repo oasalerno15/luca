@@ -11,6 +11,32 @@ import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(SplitText, useGSAP);
 
+// ===================== PARTNER BUTTON =====================
+function PartnerButton() {
+  const [showComingSoon, setShowComingSoon] = useState(false);
+
+  const handleClick = () => {
+    setShowComingSoon(true);
+    setTimeout(() => setShowComingSoon(false), 2000); // Hide after 2 seconds
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleClick}
+        className="text-base font-light tracking-tight text-white/80 transition-colors hover:text-white"
+      >
+        Partner
+      </button>
+      {showComingSoon && (
+        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white/90 text-black px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap animate-pulse">
+          Coming Soon!
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ===================== LOGIN DROPDOWN =====================
 function LoginDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -395,9 +421,10 @@ export default function Hero({
       {/* Navigation Bar */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-12 lg:px-20">
         <div className="text-2xl font-light tracking-tight text-white">
-          Tutoring Co.
+          Integrator Project
         </div>
         <div className="hidden md:flex items-center gap-12">
+          <PartnerButton />
           <a href="#about" className="text-base font-light tracking-tight text-white/80 transition-colors hover:text-white">
             About Us
           </a>

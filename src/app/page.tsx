@@ -466,21 +466,21 @@ function RegistrationSection() {
   };
 
   return (
-    <section ref={formSectionRef} id="register" className="relative h-screen w-screen overflow-hidden bg-black">
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-6 px-6 py-12 md:px-10 lg:px-16">
+    <section ref={formSectionRef} id="register" className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-4 px-6 py-8 md:px-10 lg:px-16">
         {!isSubmitted && (
           <>
-            <h2 ref={formTitleRef} className="text-center text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
+            <h2 ref={formTitleRef} className="text-center text-3xl font-extralight leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl">
               Register for Tutoring
             </h2>
             
-            <p ref={formDescRef} className="max-w-2xl text-center text-base font-light leading-relaxed tracking-tight text-white/75 sm:text-lg">
+            <p ref={formDescRef} className="max-w-2xl text-center text-sm font-light leading-relaxed tracking-tight text-white/75 sm:text-base">
               Tell us about yourself so we can match you with the perfect tutor.
             </p>
             
-            <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-6xl mt-8">
+            <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-5xl mt-6">
               {/* Form Container with consistent spacing */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
                 
                 {/* Error Message */}
                 {error && (
@@ -489,14 +489,14 @@ function RegistrationSection() {
                   </div>
                 )}
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column */}
-                  <div ref={leftColumnRef} className="space-y-8">
+                  <div ref={leftColumnRef} className="space-y-6">
               {/* Basic Information */}
-                    <div className="space-y-6">
-                      <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Basic Information</h3>
-                      <div className="space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-light text-white border-b border-white/10 pb-2">Basic Information</h3>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                             <label className="block text-sm font-medium text-white/90 mb-2">Full Name</label>
                     <input 
@@ -556,9 +556,9 @@ function RegistrationSection() {
               </div>
 
               {/* Frequency */}
-                    <div className="space-y-6">
-                      <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Tutoring Frequency</h3>
-                      <div className="space-y-4">
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-light text-white border-b border-white/10 pb-2">Tutoring Frequency</h3>
+                      <div className="space-y-3">
                         <label className="flex items-center space-x-4 cursor-pointer p-3 rounded-xl hover:bg-white/5 transition-colors duration-200">
                           <input type="radio" name="frequency" value="weekly" className="w-5 h-5 text-white bg-white/10 border-white/30 focus:ring-white/40 focus:ring-2" />
                           <div>
@@ -578,11 +578,11 @@ function RegistrationSection() {
             </div>
 
             {/* Right Column */}
-                  <div ref={rightColumnRef} className="space-y-8">
+                  <div ref={rightColumnRef} className="space-y-6">
               {/* Subjects */}
-                    <div className="space-y-6">
-                      <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Subjects Needed</h3>
-                      <div className="grid grid-cols-1 gap-3">
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-light text-white border-b border-white/10 pb-2">Subjects Needed</h3>
+                      <div className="grid grid-cols-2 gap-2">
                   {["Math", "Science", "English", "History", "Foreign Language", "Computer Science", "SAT/ACT Prep", "Other"].map((subject) => (
                           <label key={subject} className="flex items-center space-x-4 cursor-pointer p-3 rounded-xl hover:bg-white/5 transition-colors duration-200">
                             <input type="checkbox" name="subjects" value={subject} className="w-5 h-5 text-white bg-white/10 border-white/30 rounded-md focus:ring-white/40 focus:ring-2" />
@@ -593,13 +593,13 @@ function RegistrationSection() {
               </div>
 
               {/* Learning Preferences */}
-                    <div className="space-y-6">
-                      <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Learning Preferences</h3>
-                      <div className="space-y-5">
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-light text-white border-b border-white/10 pb-2">Learning Preferences</h3>
+                      <div className="space-y-4">
                 <div>
                           <label className="block text-sm font-medium text-white/90 mb-2">Learning Disabilities or Accommodations</label>
                   <textarea 
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 h-24 resize-none transition-all duration-200"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 h-20 resize-none transition-all duration-200"
                     placeholder="Please describe any learning disabilities or accommodations needed"
                   />
                 </div>
@@ -620,11 +620,11 @@ function RegistrationSection() {
           </div>
 
           {/* Submit Button */}
-                <div ref={submitRef} className="pt-6 border-t border-white/10">
+                <div ref={submitRef} className="pt-4 border-t border-white/10">
             <button 
               type="submit"
               disabled={isSubmitting}
-                    className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-8 py-4 text-lg font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-white/10 disabled:hover:to-white/5"
+                    className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-6 py-3 text-base font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-white/10 disabled:hover:to-white/5"
             >
               {isSubmitting ? (
                       <div className="flex items-center justify-center space-x-3">
@@ -769,7 +769,7 @@ function CallToActionSection() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
-              <h3 className="text-2xl font-light text-white">Experience</h3>
+              <h3 className="text-2xl font-light text-white">📚 Experience</h3>
               <p className="text-white/75 font-light leading-relaxed">Our math integrator services</p>
               <a href="#register" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
                 Learn more →
@@ -777,7 +777,7 @@ function CallToActionSection() {
             </div>
             
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
-              <h3 className="text-2xl font-light text-white">Partner</h3>
+              <h3 className="text-2xl font-light text-white">🤝 Partner</h3>
               <p className="text-white/75 font-light leading-relaxed">With us on outreach, workshops, or exhibitions</p>
               <a href="#contact" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
                 Get in touch →
@@ -785,7 +785,7 @@ function CallToActionSection() {
             </div>
             
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4 hover:bg-white/10 transition-all duration-300">
-              <h3 className="text-2xl font-light text-white">Support</h3>
+              <h3 className="text-2xl font-light text-white">💝 Support</h3>
               <p className="text-white/75 font-light leading-relaxed">Our mission (volunteer, advocate, fund)</p>
               <a href="/volunteer" className="inline-block mt-4 text-white/80 hover:text-white transition-colors underline">
                 Join us →
@@ -1017,7 +1017,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="text-white font-light text-lg">Phone</h4>
-                  <p className="text-white/75 font-light">(555) 123-4567</p>
+                  <p className="text-white/75 font-light">(646) 630-0490</p>
                   <p className="text-white/60 font-light text-sm">Mon-Fri: 8AM-8PM, Sat-Sun: 10AM-6PM</p>
                 </div>
               </div>
@@ -1031,8 +1031,8 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="text-white font-light text-lg">Office</h4>
-                  <p className="text-white/75 font-light">123 Education Street</p>
-                  <p className="text-white/75 font-light">Learning City, LC 12345</p>
+                  <p className="text-white/75 font-light">52 E 62nd St</p>
+                  <p className="text-white/75 font-light">New York, NY 10065</p>
                 </div>
               </div>
 
