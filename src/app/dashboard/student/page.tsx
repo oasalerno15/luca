@@ -160,6 +160,53 @@ export default function StudentDashboard() {
     }
   }, [user?.email]);
 
+  // Admin function to load all tutor session logs - MOVED BEFORE CONDITIONAL RETURNS
+  const loadAllTutorSessionLogs = useCallback(async () => {
+    setSessionLogsLoading(true);
+    
+    try {
+      // Get all session logs from localStorage for all tutors
+      const allSessionLogs: any[] = [];
+      
+      // Get all accepted students to find tutor usernames
+      const allAcceptedStudents = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('accepted_students_')) {
+          const tutorUsername = key.replace('accepted_students_', '');
+          const students = JSON.parse(localStorage.getItem(key) || '[]');
+          allAcceptedStudents.push(...students.map((s: any) => ({ ...s, tutorUsername })));
+        }
+      }
+      
+      // Get session logs for each tutor
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('session_logs_')) {
+          const tutorUsername = key.replace('session_logs_', '');
+          const sessionLogs = JSON.parse(localStorage.getItem(key) || '[]');
+          allSessionLogs.push(...sessionLogs.map((log: any) => ({ ...log, tutorUsername })));
+        }
+      }
+      
+      // Sort by date (newest first)
+      allSessionLogs.sort((a, b) => new Date(b.created_at || b.date).getTime() - new Date(a.created_at || a.date).getTime());
+      
+      setAllTutorSessionLogs(allSessionLogs);
+    } catch (error) {
+      console.error('Error loading session logs:', error);
+    } finally {
+      setSessionLogsLoading(false);
+    }
+  }, []);
+
+  // Load session logs when admin tab is selected - MOVED BEFORE CONDITIONAL RETURNS
+  useEffect(() => {
+    if (isAdmin && activeAdminTab === 'session-logs') {
+      loadAllTutorSessionLogs();
+    }
+  }, [isAdmin, activeAdminTab, loadAllTutorSessionLogs]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -207,55 +254,6 @@ export default function StudentDashboard() {
     // Navigate to resources page
     router.push('/resources');
   };
-
-  // Admin function to load all tutor session logs
-  const loadAllTutorSessionLogs = useCallback(async () => {
-    if (!isAdmin) return;
-    
-    setSessionLogsLoading(true);
-    
-    try {
-      // Get all session logs from localStorage for all tutors
-      const allSessionLogs: any[] = [];
-      
-      // Get all accepted students to find tutor usernames
-      const allAcceptedStudents = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('accepted_students_')) {
-          const tutorUsername = key.replace('accepted_students_', '');
-          const students = JSON.parse(localStorage.getItem(key) || '[]');
-          allAcceptedStudents.push(...students.map((s: any) => ({ ...s, tutorUsername })));
-        }
-      }
-      
-      // Get session logs for each tutor
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('session_logs_')) {
-          const tutorUsername = key.replace('session_logs_', '');
-          const sessionLogs = JSON.parse(localStorage.getItem(key) || '[]');
-          allSessionLogs.push(...sessionLogs.map((log: any) => ({ ...log, tutorUsername })));
-        }
-      }
-      
-      // Sort by date (newest first)
-      allSessionLogs.sort((a, b) => new Date(b.created_at || b.date).getTime() - new Date(a.created_at || a.date).getTime());
-      
-      setAllTutorSessionLogs(allSessionLogs);
-    } catch (error) {
-      console.error('Error loading session logs:', error);
-    } finally {
-      setSessionLogsLoading(false);
-    }
-  }, [isAdmin]);
-
-  // Load session logs when admin tab is selected
-  useEffect(() => {
-    if (isAdmin && activeAdminTab === 'session-logs') {
-      loadAllTutorSessionLogs();
-    }
-  }, [isAdmin, activeAdminTab, loadAllTutorSessionLogs]);
 
   const handleSubmitRequest = async () => {
     if (!user?.email || !selectedTutor) return;
