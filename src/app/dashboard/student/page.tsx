@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -27,6 +27,12 @@ export default function StudentDashboard() {
   });
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
   const [requestSubmitted, setRequestSubmitted] = useState(false);
+  
+  // Admin functionality for student_alpha01
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [allTutorSessionLogs, setAllTutorSessionLogs] = useState<any[]>([]);
+  const [sessionLogsLoading, setSessionLogsLoading] = useState(false);
+  const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'session-logs'>('overview');
 
   // Available tutors with descriptions
   const availableTutors = [
@@ -47,6 +53,11 @@ export default function StudentDashboard() {
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login/student');
+    }
+    
+    // Check if user is admin (student_alpha01)
+    if (user?.email && user.email === 'student_alpha01@example.com') {
+      setIsAdmin(true);
     }
   }, [user, loading, router]);
 
@@ -197,6 +208,55 @@ export default function StudentDashboard() {
     router.push('/resources');
   };
 
+  // Admin function to load all tutor session logs
+  const loadAllTutorSessionLogs = useCallback(async () => {
+    if (!isAdmin) return;
+    
+    setSessionLogsLoading(true);
+    
+    try {
+      // Get all session logs from localStorage for all tutors
+      const allSessionLogs: any[] = [];
+      
+      // Get all accepted students to find tutor usernames
+      const allAcceptedStudents = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('accepted_students_')) {
+          const tutorUsername = key.replace('accepted_students_', '');
+          const students = JSON.parse(localStorage.getItem(key) || '[]');
+          allAcceptedStudents.push(...students.map((s: any) => ({ ...s, tutorUsername })));
+        }
+      }
+      
+      // Get session logs for each tutor
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('session_logs_')) {
+          const tutorUsername = key.replace('session_logs_', '');
+          const sessionLogs = JSON.parse(localStorage.getItem(key) || '[]');
+          allSessionLogs.push(...sessionLogs.map((log: any) => ({ ...log, tutorUsername })));
+        }
+      }
+      
+      // Sort by date (newest first)
+      allSessionLogs.sort((a, b) => new Date(b.created_at || b.date).getTime() - new Date(a.created_at || a.date).getTime());
+      
+      setAllTutorSessionLogs(allSessionLogs);
+    } catch (error) {
+      console.error('Error loading session logs:', error);
+    } finally {
+      setSessionLogsLoading(false);
+    }
+  }, [isAdmin]);
+
+  // Load session logs when admin tab is selected
+  useEffect(() => {
+    if (isAdmin && activeAdminTab === 'session-logs') {
+      loadAllTutorSessionLogs();
+    }
+  }, [isAdmin, activeAdminTab, loadAllTutorSessionLogs]);
+
   const handleSubmitRequest = async () => {
     if (!user?.email || !selectedTutor) return;
 
@@ -279,7 +339,116 @@ export default function StudentDashboard() {
 
       {/* Dashboard Content */}
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <h1 className="text-4xl font-extralight mb-8">Student Dashboard</h1>
+        <h1 className="text-4xl font-extralight mb-8">
+          {isAdmin ? 'Admin Dashboard' : 'Student Dashboard'}
+        </h1>
+        
+        {/* Admin Section for student_alpha01 */}
+        {isAdmin && (
+          <div className="mb-8">
+            <div className="flex space-x-4 mb-6">
+              <button
+                onClick={() => setActiveAdminTab('overview')}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  activeAdminTab === 'overview'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
+                }`}
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => setActiveAdminTab('session-logs')}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  activeAdminTab === 'session-logs'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
+                }`}
+              >
+                All Tutor Session Logs
+              </button>
+            </div>
+            
+            {activeAdminTab === 'session-logs' && (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-8">
+                <h3 className="text-xl font-light mb-6 flex items-center">
+                  <span className="mr-3">📊</span>
+                  All Tutor Session Logs
+                </h3>
+                
+                {sessionLogsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                      <span className="text-white/60">Loading session logs...</span>
+                    </div>
+                  </div>
+                ) : allTutorSessionLogs.length > 0 ? (
+                  <div className="space-y-4">
+                    {allTutorSessionLogs.map((log, index) => (
+                      <div key={index} className="bg-white/5 border border-white/10 rounded-lg p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <h4 className="text-lg font-medium text-white mb-2">
+                              {log.session_title || log.title || 'Session'}
+                            </h4>
+                            <div className="flex items-center space-x-4 text-sm text-white/60">
+                              <span>👨‍🏫 Tutor: {log.tutorUsername}</span>
+                              <span>📅 {new Date(log.date || log.created_at).toLocaleDateString()}</span>
+                              <span>⏱️ Duration: {log.duration || 'N/A'}</span>
+                              <span>📚 Subject: {log.subject || log.session_subject || 'N/A'}</span>
+                            </div>
+                          </div>
+                          {log.rating && (
+                            <div className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-lg text-sm font-medium">
+                              ⭐ {log.rating}/5
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {log.topics_covered && (
+                            <div>
+                              <h5 className="text-white/80 font-medium mb-1">Topics Covered:</h5>
+                              <p className="text-white/60 text-sm">{log.topics_covered}</p>
+                            </div>
+                          )}
+                          
+                          {log.comments && (
+                            <div>
+                              <h5 className="text-white/80 font-medium mb-1">Comments:</h5>
+                              <p className="text-white/60 text-sm">{log.comments}</p>
+                            </div>
+                          )}
+                          
+                          {log.homework_assigned && (
+                            <div>
+                              <h5 className="text-white/80 font-medium mb-1">Homework Assigned:</h5>
+                              <p className="text-white/60 text-sm">{log.homework_assigned}</p>
+                            </div>
+                          )}
+                          
+                          {log.next_session_topics && (
+                            <div>
+                              <h5 className="text-white/80 font-medium mb-1">Next Session Topics:</h5>
+                              <p className="text-white/60 text-sm">{log.next_session_topics}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📝</div>
+                    <h4 className="text-xl font-light text-white mb-2">No Session Logs Found</h4>
+                    <p className="text-white/60">No tutors have logged any sessions yet.</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Dashboard Content - All verified users are approved */}
         {profile.status === 'approved' && (

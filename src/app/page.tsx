@@ -299,6 +299,7 @@ function RegistrationSection() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [isBrowningStudent, setIsBrowningStudent] = useState(false);
 
   useGSAP(
     () => {
@@ -369,37 +370,62 @@ function RegistrationSection() {
       const formData = new FormData(e.target as HTMLFormElement);
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
-      const fullName = formData.get('fullName') as string;
-      const grade = formData.get('grade') as string;
-      const school = formData.get('school') as string;
       
-      console.log('Starting registration process...', { email, fullName });
+      console.log('Starting registration process...', { email, isBrowningStudent });
 
-      // Create Supabase account
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            role: 'student',
-            grade,
-            school
+      // For Browning students, auto-fill some data
+      if (isBrowningStudent) {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: email.split('@')[0].replace('.', ' '), // Use email prefix as name
+              role: 'student',
+              grade: '12', // Default grade for Browning students
+              school: 'Browning School'
+            }
           }
+        });
+        
+        if (signUpError) {
+          throw signUpError;
         }
-      });
+        
+        if (!data.user) {
+          throw new Error('User account was not created properly. Please try again.');
+        }
+        
+        console.log('Browning student created successfully:', data.user.id);
+      } else {
+        // Regular registration flow
+        const fullName = formData.get('fullName') as string;
+        const grade = formData.get('grade') as string;
+        const school = formData.get('school') as string;
+        
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+              role: 'student',
+              grade,
+              school
+            }
+          }
+        });
 
-      console.log('Signup response:', { data, error: signUpError });
+        if (signUpError) {
+          throw signUpError;
+        }
 
-      if (signUpError) {
-        throw signUpError;
+        if (!data.user) {
+          throw new Error('User account was not created properly. Please try again.');
+        }
+
+        console.log('User created successfully:', data.user.id);
       }
-
-      if (!data.user) {
-        throw new Error('User account was not created properly. Please try again.');
-      }
-
-      console.log('User created successfully:', data.user.id);
       
       // Profile will be created automatically by the database trigger
       // No need to manually create it - this was causing the infinite recursion error
@@ -478,6 +504,25 @@ function RegistrationSection() {
               Tell us about yourself so we can match you with the perfect tutor.
             </p>
             
+            {/* Browning Student Quick Registration */}
+            <div className="w-full max-w-5xl mt-6">
+              <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-2xl p-6 mb-6">
+                <div className="text-center">
+                  <h3 className="text-xl font-light text-white mb-3">🎓 Browning School Student?</h3>
+                  <p className="text-white/75 text-sm mb-4">
+                    Get instant access with just your Browning email address
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsBrowningStudent(true)}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    I'm a Browning Student
+                  </button>
+                </div>
+              </div>
+            </div>
+            
             <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-5xl mt-6">
               {/* Form Container with consistent spacing */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
@@ -489,7 +534,72 @@ function RegistrationSection() {
                   </div>
                 )}
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Browning Student Simple Form */}
+                {isBrowningStudent ? (
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-light text-white mb-2">🎓 Browning Student Registration</h3>
+                      <p className="text-white/75 text-sm">
+                        We'll verify your Browning email and get you set up quickly
+                      </p>
+                    </div>
+                    
+                    <div className="max-w-md mx-auto space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-white/90 mb-2">Browning Email Address</label>
+                        <input 
+                          type="email" 
+                          name="email"
+                          required
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
+                          placeholder="your.email@browning.edu"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
+                        <input 
+                          type="password" 
+                          name="password"
+                          required
+                          minLength={6}
+                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
+                          placeholder="Create a password (minimum 6 characters)"
+                        />
+                      </div>
+                      
+                      <div className="pt-4">
+                        <button 
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-6 py-3 text-base font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-white/10 disabled:hover:to-white/5"
+                        >
+                          {isSubmitting ? (
+                            <div className="flex items-center justify-center space-x-3">
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span>Setting up your account...</span>
+                            </div>
+                          ) : (
+                            "Create Browning Student Account"
+                          )}
+                        </button>
+                      </div>
+                      
+                      <div className="text-center pt-4">
+                        <button
+                          type="button"
+                          onClick={() => setIsBrowningStudent(false)}
+                          className="text-white/60 hover:text-white/80 transition-colors text-sm underline"
+                        >
+                          ← Back to full registration form
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Regular Full Form */
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column */}
                   <div ref={leftColumnRef} className="space-y-6">
               {/* Basic Information */}
@@ -619,23 +729,25 @@ function RegistrationSection() {
             </div>
           </div>
 
-          {/* Submit Button */}
-                <div ref={submitRef} className="pt-4 border-t border-white/10">
-            <button 
-              type="submit"
-              disabled={isSubmitting}
-                    className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-6 py-3 text-base font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-white/10 disabled:hover:to-white/5"
-            >
-              {isSubmitting ? (
-                      <div className="flex items-center justify-center space-x-3">
-                        <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                  <span>Submitting...</span>
-                </div>
-              ) : (
-                "Submit Registration"
-              )}
-            </button>
-                </div>
+                    {/* Submit Button */}
+                    <div ref={submitRef} className="pt-4 border-t border-white/10">
+                      <button 
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-6 py-3 text-base font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-white/10 disabled:hover:to-white/5"
+                      >
+                        {isSubmitting ? (
+                          <div className="flex items-center justify-center space-x-3">
+                            <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                            <span>Submitting...</span>
+                          </div>
+                        ) : (
+                          "Submit Registration"
+                        )}
+                      </button>
+                    </div>
+                  </>
+                )}
           </div>
         </form>
           </>
@@ -655,13 +767,16 @@ function RegistrationSection() {
 
             {/* Success Title */}
             <h2 className="text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl">
-              Application Submitted Successfully!
+              {isBrowningStudent ? '🎓 Welcome to The Integrator Project!' : 'Application Submitted Successfully!'}
             </h2>
 
             {/* Success Message */}
             <div className="space-y-6 max-w-2xl mx-auto">
               <p className="text-lg font-light leading-relaxed tracking-tight text-white/75 sm:text-xl">
-                Welcome to our tutoring platform! Your account has been created successfully. Please check your email to verify your account, then you can immediately log in and start browsing tutors.
+                {isBrowningStudent 
+                  ? "Welcome, Browning student! Your account has been created with instant access. Check your email to verify your account, then you can immediately log in and start browsing tutors."
+                  : "Welcome to our tutoring platform! Your account has been created successfully. Please check your email to verify your account, then you can immediately log in and start browsing tutors."
+                }
               </p>
               
               <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
