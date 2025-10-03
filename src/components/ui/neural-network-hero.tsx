@@ -90,14 +90,6 @@ function LoginDropdown() {
           >
             Tutor Login
           </a>
-          <div className="border-t border-white/10"></div>
-          <a
-            href="/dashboard/tutor"
-            className="block px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 transition-colors text-sm font-light"
-            onClick={() => setIsOpen(false)}
-          >
-            View Tutor Dashboard
-          </a>
         </div>
       )}
     </div>
@@ -421,7 +413,7 @@ export default function Hero({
       {/* Navigation Bar */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-12 lg:px-20">
         <div className="text-2xl font-light tracking-tight text-white">
-          Integrator Project
+          The Integrator Project
         </div>
         <div className="hidden md:flex items-center gap-12">
           <PartnerButton />

@@ -132,7 +132,7 @@ function TutorProfileSection() {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-12 lg:px-20">
         <Link href="/" className="text-2xl font-light tracking-tight text-white hover:text-white/80 transition-colors">
-          Integrator Project
+          The Integrator Project
         </Link>
         <div className="hidden md:flex items-center gap-12">
           <PartnerButton />

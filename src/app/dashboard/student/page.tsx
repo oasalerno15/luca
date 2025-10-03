@@ -260,7 +260,7 @@ export default function StudentDashboard() {
       <nav className="border-b border-white/10 px-8 py-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-2xl font-light tracking-tight">
-            Integrator Project
+            The Integrator Project
           </Link>
           <div className="flex items-center space-x-8">
             <button className="text-white/80 hover:text-white transition-colors font-light">
@@ -415,12 +415,18 @@ export default function StudentDashboard() {
             {selectedTutor && (
               <div className="max-w-md mx-auto space-y-4 mt-6 relative">
                 {requestSubmitted && (
-                  <div className="absolute inset-0 bg-green-600/20 rounded-lg flex items-center justify-center z-10 animate-pulse">
-                    <div className="bg-green-600 text-white px-6 py-3 rounded-lg flex items-center space-x-2">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="font-medium">Request sent to {selectedTutor.name}!</span>
+                  <div className="absolute inset-0 bg-green-600/30 backdrop-blur-sm rounded-xl flex items-center justify-center z-10">
+                    <div className="bg-gradient-to-r from-green-600 to-green-500 text-white px-8 py-6 rounded-2xl flex flex-col items-center space-y-4 shadow-2xl transform scale-110 animate-bounce">
+                      <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="text-xl font-semibold mb-2">Successfully Requested!</h3>
+                        <p className="text-green-100">Your request has been sent to {selectedTutor.name}</p>
+                        <p className="text-green-200 text-sm mt-1">They'll review your request and get back to you soon.</p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -491,28 +497,28 @@ export default function StudentDashboard() {
                         <button
                           onClick={handleSubmitRequest}
                           disabled={isSubmittingRequest || requestSubmitted}
-                          className={`flex-1 rounded-lg px-4 py-2 text-sm font-light text-white transition-all duration-300 ${
+                          className={`flex-1 rounded-xl px-6 py-3 text-sm font-medium text-white transition-all duration-300 transform ${
                             isSubmittingRequest 
-                              ? 'bg-blue-500 cursor-not-allowed opacity-75' 
+                              ? 'bg-blue-500 cursor-not-allowed opacity-75 scale-95' 
                               : requestSubmitted
-                              ? 'bg-green-600 cursor-not-allowed'
-                              : 'bg-blue-600 hover:bg-blue-700'
+                              ? 'bg-green-600 cursor-not-allowed scale-105'
+                              : 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:scale-105 shadow-lg hover:shadow-xl'
                           }`}
                         >
                           {isSubmittingRequest ? (
-                            <div className="flex items-center justify-center space-x-2">
-                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                              <span>Submitting...</span>
+                            <div className="flex items-center justify-center space-x-3">
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span className="font-medium">Submitting Request...</span>
                             </div>
                           ) : requestSubmitted ? (
                             <div className="flex items-center justify-center space-x-2">
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <svg className="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
-                              <span>Request Sent!</span>
+                              <span className="font-semibold">Successfully Sent!</span>
                             </div>
                           ) : (
-                            'Submit Request'
+                            <span className="font-semibold">Submit Request</span>
                           )}
                         </button>
                         <button

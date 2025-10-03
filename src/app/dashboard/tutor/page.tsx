@@ -262,7 +262,7 @@ export default function TutorDashboard() {
       <nav className="border-b border-white/10 px-8 py-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-2xl font-light tracking-tight">
-            Integrator Project
+            The Integrator Project
           </Link>
           <div className="flex items-center space-x-8">
             <button className="text-white/80 hover:text-white transition-colors font-light">

@@ -61,8 +61,8 @@ function AboutUsSection() {
   );
 
   return (
-    <section ref={sectionRef} id="about" className="relative h-screen w-screen overflow-hidden bg-black">
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-12 px-6 text-center md:px-10 lg:px-16">
+    <section ref={sectionRef} id="about" className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-12 px-6 py-20 text-center md:px-10 lg:px-16">
         <h2 ref={titleRef} className="max-w-4xl text-center text-5xl font-extralight leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
           About Us
         </h2>
@@ -149,8 +149,8 @@ function CoreValuesSection() {
   );
 
   return (
-    <section ref={sectionRef} className="relative h-screen w-screen overflow-hidden bg-black">
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-16 px-6 text-center md:px-10 lg:px-16">
+    <section ref={sectionRef} className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-16 px-6 py-20 text-center md:px-10 lg:px-16">
         <h2 ref={titleRef} className="text-5xl font-extralight leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
           Core Beliefs & Values
         </h2>
@@ -240,8 +240,8 @@ function OurApproachSection() {
   );
 
   return (
-    <section ref={sectionRef} className="relative h-screen w-screen overflow-hidden bg-black">
-      <div className="relative mx-auto flex h-full max-w-7xl flex-col items-center justify-center gap-16 px-6 text-center md:px-10 lg:px-16">
+    <section ref={sectionRef} className="relative min-h-screen w-screen overflow-hidden bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-16 px-6 py-20 text-center md:px-10 lg:px-16">
         <h2 ref={titleRef} className="text-5xl font-extralight leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
           What We Do
         </h2>
