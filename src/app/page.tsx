@@ -1,6 +1,7 @@
 'use client';
 
 import Hero from "@/components/ui/neural-network-hero";
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -19,9 +20,9 @@ function AboutUsSection() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      if (!sectionRef.current || typeof window === 'undefined') return;
 
-      // Set initial states
+      // Set initial states after hydration
       gsap.set([titleRef.current, descRef.current, missionRef.current, imageRef.current], {
         autoAlpha: 0,
         y: 50
@@ -57,7 +58,7 @@ function AboutUsSection() {
         ease: "power3.out"
       }, "-=0.3");
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [] }
   );
 
   return (
@@ -90,13 +91,16 @@ function AboutUsSection() {
             </ul>
           </div>
 
-          {/* Placeholder Image */}
-          <div ref={imageRef} className="bg-white/10 border-2 border-dashed border-white/30 rounded-2xl h-96 flex items-center justify-center">
-            <div className="text-center text-white/60">
-              <div className="text-4xl mb-4">📸</div>
-              <p className="text-lg font-light">Image Placeholder</p>
-              <p className="text-sm font-light">Add your photo here</p>
-          </div>
+          {/* Mission Image */}
+          <div ref={imageRef} className="relative rounded-2xl h-96 overflow-hidden border border-white/20" suppressHydrationWarning>
+            <Image
+              src="/1.png"
+              alt="Students collaborating and learning together, representing our mission to empower learners through accessible education"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
           </div>
         </div>
       </div>
@@ -113,7 +117,7 @@ function CoreValuesSection() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      if (!sectionRef.current || typeof window === 'undefined') return;
 
       // Set initial states
       gsap.set([titleRef.current, valuesRef.current, imageRef.current], {
@@ -145,7 +149,7 @@ function CoreValuesSection() {
         ease: "power3.out"
       }, "-=0.4");
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [] }
   );
 
   return (
@@ -157,13 +161,15 @@ function CoreValuesSection() {
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 w-full max-w-6xl items-center">
-          {/* Placeholder Image */}
-          <div ref={imageRef} className="bg-white/10 border-2 border-dashed border-white/30 rounded-2xl h-96 flex items-center justify-center">
-            <div className="text-center text-white/60">
-              <div className="text-4xl mb-4">📸</div>
-              <p className="text-lg font-light">Image Placeholder</p>
-              <p className="text-sm font-light">Add your photo here</p>
-            </div>
+          {/* Values Image */}
+          <div ref={imageRef} className="relative rounded-2xl h-96 overflow-hidden border border-white/20" suppressHydrationWarning>
+            <Image
+              src="/2.png"
+              alt="Diverse group of students engaged in interactive learning, embodying our core values of equity, empathy, and community"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
 
           {/* Core Values */}
@@ -204,7 +210,7 @@ function OurApproachSection() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      if (!sectionRef.current || typeof window === 'undefined') return;
 
       // Set initial states
       gsap.set([titleRef.current, approachRef.current, imageRef.current], {
@@ -236,7 +242,7 @@ function OurApproachSection() {
         ease: "power3.out"
       }, "-=0.4");
     },
-    { scope: sectionRef }
+    { scope: sectionRef, dependencies: [] }
   );
 
   return (
@@ -272,13 +278,15 @@ function OurApproachSection() {
             </div>
           </div>
 
-          {/* Placeholder Image */}
-          <div ref={imageRef} className="bg-white/10 border-2 border-dashed border-white/30 rounded-2xl h-96 flex items-center justify-center">
-            <div className="text-center text-white/60">
-              <div className="text-4xl mb-4">📸</div>
-              <p className="text-lg font-light">Image Placeholder</p>
-              <p className="text-sm font-light">Add your photo here</p>
-            </div>
+          {/* Approach Image */}
+          <div ref={imageRef} className="relative rounded-2xl h-96 overflow-hidden border border-white/20" suppressHydrationWarning>
+            <Image
+              src="/3.png"
+              alt="Hands-on learning experience showcasing our tailored, inclusive approach to education"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
         </div>
       </div>
@@ -922,6 +930,8 @@ function FAQSection() {
   const faqTitleRef = useRef<HTMLHeadingElement | null>(null);
   const faqDescRef = useRef<HTMLParagraphElement | null>(null);
   const faqListRef = useRef<HTMLDivElement | null>(null);
+  
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
@@ -949,6 +959,10 @@ function FAQSection() {
       answer: "Your satisfaction is our priority. If you're not completely happy with your tutor match, we'll find you a new one at no additional cost. We want to ensure you have the best possible learning experience."
     }
   ];
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   useGSAP(
     () => {
@@ -1000,21 +1014,26 @@ function FAQSection() {
         </h2>
         
         <p ref={faqDescRef} className="max-w-2xl text-center text-base font-light leading-relaxed tracking-tight text-white/75 sm:text-lg">
-          Got questions? We've got answers. Hover over any question to see the answer.
+          Got questions? We've got answers. Click any question to see the answer.
         </p>
         
         <div ref={faqListRef} className="w-full max-w-4xl space-y-4 mt-8">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="group relative bg-white/5 border border-white/10 rounded-xl p-6 transition-all duration-300 hover:bg-white/10 hover:border-white/20 cursor-pointer"
+              className="relative bg-white/5 border border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20"
             >
               {/* Question */}
-              <div className="flex items-center justify-between">
+              <button
+                onClick={() => toggleFAQ(index)}
+                className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus:ring-2 focus:ring-white/30 rounded-xl"
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-answer-${index}`}
+              >
                 <h3 className="text-lg font-light text-white pr-4">
                   {faq.question}
                 </h3>
-                <div className="flex-shrink-0 transform transition-transform duration-300 group-hover:rotate-90">
+                <div className={`flex-shrink-0 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}>
                   <svg
                     className="w-5 h-5 text-white/60"
                     fill="none"
@@ -1025,17 +1044,22 @@ function FAQSection() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M9 5l7 7-7 7"
+                      d="M19 9l-7 7-7-7"
                     />
                   </svg>
                 </div>
-              </div>
+              </button>
               
-              {/* Answer - Hidden by default, shown on hover */}
-              <div className="overflow-hidden transition-all duration-300 max-h-0 group-hover:max-h-40 group-hover:mt-4">
-                <p className="text-white/75 font-light leading-relaxed">
-                  {faq.answer}
-                </p>
+              {/* Answer - Expandable accordion */}
+              <div 
+                id={`faq-answer-${index}`}
+                className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+              >
+                <div className="px-6 pb-6">
+                  <p className="text-white/75 font-light leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -1051,6 +1075,10 @@ function ContactSection() {
   const contactDescRef = useRef<HTMLParagraphElement | null>(null);
   const contactInfoRef = useRef<HTMLDivElement | null>(null);
   const contactFormRef = useRef<HTMLFormElement | null>(null);
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useGSAP(
     () => {
@@ -1094,6 +1122,45 @@ function ContactSection() {
     },
     { scope: contactSectionRef }
   );
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const contactData = {
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        email: formData.get('email') as string,
+        subject: formData.get('subject') as string,
+        message: formData.get('message') as string,
+        created_at: new Date().toISOString()
+      };
+
+      // Save to Supabase contact_submissions table
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([contactData]);
+
+      if (error) throw error;
+
+      setSubmitSuccess(true);
+      if (contactFormRef.current) {
+        contactFormRef.current.reset();
+      }
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setSubmitSuccess(false), 5000);
+    } catch (err) {
+      console.error('Contact form error:', err);
+      setSubmitError('Failed to send message. Please try again or email us directly at Luca@integratorproject.org');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section ref={contactSectionRef} id="contact" className="relative min-h-screen w-screen overflow-hidden bg-black">
@@ -1168,8 +1235,20 @@ function ContactSection() {
 
           {/* Contact Form */}
           <div>
-            <form ref={contactFormRef} className="space-y-6">
+            <form ref={contactFormRef} onSubmit={handleContactSubmit} className="space-y-6">
               <h3 className="text-2xl font-light text-white mb-6">Send us a Message</h3>
+              
+              {submitSuccess && (
+                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                  <p className="text-green-400 text-sm">✓ Message sent successfully! We'll get back to you within 2-4 hours.</p>
+                </div>
+              )}
+              
+              {submitError && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                  <p className="text-red-400 text-sm">{submitError}</p>
+                </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1198,6 +1277,8 @@ function ContactSection() {
                 <label className="block text-sm font-light text-white/80 mb-2">Email Address</label>
                 <input 
                   type="email" 
+                  name="email"
+                  required
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent"
                   placeholder="your.email@example.com"
                 />
@@ -1205,7 +1286,7 @@ function ContactSection() {
 
               <div>
                 <label className="block text-sm font-light text-white/80 mb-2">Subject</label>
-                <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent">
+                <select name="subject" required className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent">
                   <option value="">Select a subject</option>
                   <option value="general">General Inquiry</option>
                   <option value="tutoring">Tutoring Services</option>
@@ -1219,6 +1300,8 @@ function ContactSection() {
               <div>
                 <label className="block text-sm font-light text-white/80 mb-2">Message</label>
                 <textarea 
+                  name="message"
+                  required
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent h-32 resize-none"
                   placeholder="Tell us how we can help you..."
                 />
@@ -1226,9 +1309,17 @@ function ContactSection() {
 
               <button 
                 type="submit"
-                className="w-full rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-light tracking-tight text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+                disabled={isSubmitting}
+                className="w-full rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-light tracking-tight text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Sending...</span>
+                  </div>
+                ) : (
+                  'Send Message'
+                )}
               </button>
             </form>
           </div>

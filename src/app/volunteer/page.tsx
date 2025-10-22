@@ -5,7 +5,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
-import { signUp } from '@/lib/supabase';
+import { signUp, supabase } from '@/lib/supabase';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -400,6 +400,11 @@ function ApplicationSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const successRef = useRef<HTMLDivElement | null>(null);
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useGSAP(
     () => {
@@ -435,15 +440,98 @@ function ApplicationSection() {
     { scope: sectionRef }
   );
 
+  const handleVolunteerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      const formData = new FormData(e.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+      
+      // Get checkbox values
+      const subjects = Array.from(formData.getAll('subjects'));
+      
+      const volunteerData = {
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        email: email,
+        phone: formData.get('phone') as string,
+        educationLevel: formData.get('educationLevel') as string,
+        subjects: subjects,
+        experience: formData.get('experience') as string,
+        availabilityHours: formData.get('availabilityHours') as string,
+        motivation: formData.get('motivation') as string,
+        created_at: new Date().toISOString()
+      };
+
+      // Create tutor account with signUp
+      const { data, error: signUpError } = await signUp(email, password);
+      
+      if (signUpError) throw signUpError;
+      
+      if (!data.user) {
+        throw new Error('Account was not created properly. Please try again.');
+      }
+
+      // Save volunteer application to Supabase
+      const { error: insertError } = await supabase
+        .from('volunteer_applications')
+        .insert([{
+          ...volunteerData,
+          user_id: data.user.id,
+          full_name: `${volunteerData.firstName} ${volunteerData.lastName}`
+        }]);
+
+      if (insertError) throw insertError;
+
+      setSubmitSuccess(true);
+      
+      // Animate form out and success message in
+      if (formRef.current && successRef.current) {
+        gsap.to(formRef.current, {
+          autoAlpha: 0,
+          y: -30,
+          duration: 0.5,
+          ease: "power3.out"
+        });
+        
+        gsap.set(successRef.current, { autoAlpha: 0, y: 30 });
+        gsap.to(successRef.current, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.3
+        });
+      }
+    } catch (err) {
+      console.error('Volunteer application error:', err);
+      setSubmitError((err as Error).message || 'Failed to submit application. Please try again or contact us at Luca@integratorproject.org');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section ref={sectionRef} id="application" className="relative min-h-screen w-screen overflow-hidden bg-black">
       <div className="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center gap-12 px-6 py-20 md:px-10 lg:px-16">
-        <h2 ref={titleRef} className="text-center text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
-          Apply to Volunteer
-        </h2>
-        
-        <form ref={formRef} className="w-full max-w-3xl">
+        {!submitSuccess && (
+          <>
+            <h2 ref={titleRef} className="text-center text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
+              Apply to Volunteer
+            </h2>
+            
+            <form ref={formRef} onSubmit={handleVolunteerSubmit} className="w-full max-w-3xl">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-8">
+            
+            {submitError && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                <p className="text-red-400 text-sm">{submitError}</p>
+              </div>
+            )}
             
             {/* Personal Information */}
             <div className="space-y-6">
@@ -453,6 +541,8 @@ function ApplicationSection() {
                   <label className="block text-sm font-medium text-white/90 mb-2">First Name</label>
                   <input 
                     type="text" 
+                    name="firstName"
+                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
                     placeholder="Your first name"
                   />
@@ -461,6 +551,8 @@ function ApplicationSection() {
                   <label className="block text-sm font-medium text-white/90 mb-2">Last Name</label>
                   <input 
                     type="text" 
+                    name="lastName"
+                    required
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
                     placeholder="Your last name"
                   />
@@ -470,14 +562,29 @@ function ApplicationSection() {
                 <label className="block text-sm font-medium text-white/90 mb-2">Email Address</label>
                 <input 
                   type="email" 
+                  name="email"
+                  required
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
                   placeholder="your.email@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
+                <input 
+                  type="password" 
+                  name="password"
+                  required
+                  minLength={6}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
+                  placeholder="Create a password (minimum 6 characters)"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">Phone Number</label>
                 <input 
                   type="tel" 
+                  name="phone"
+                  required
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200"
                   placeholder="(555) 123-4567"
                 />
@@ -489,7 +596,7 @@ function ApplicationSection() {
               <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Education & Experience</h3>
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">Highest Level of Education</label>
-                <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200">
+                <select name="educationLevel" required className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200">
                   <option value="">Select education level</option>
                   <option value="high-school">High School Diploma</option>
                   <option value="some-college">Some College</option>
@@ -499,11 +606,11 @@ function ApplicationSection() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">Subject Expertise</label>
+                <label className="block text-sm font-medium text-white/90 mb-2">Subject Expertise (select at least one)</label>
                 <div className="grid grid-cols-2 gap-3">
                   {["Math", "Science", "English", "History", "Foreign Language", "Computer Science", "SAT/ACT Prep", "Other"].map((subject) => (
                     <label key={subject} className="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-white/5 transition-colors duration-200">
-                      <input type="checkbox" className="w-5 h-5 text-white bg-white/10 border-white/30 rounded-md focus:ring-white/40 focus:ring-2" />
+                      <input type="checkbox" name="subjects" value={subject} className="w-5 h-5 text-white bg-white/10 border-white/30 rounded-md focus:ring-white/40 focus:ring-2" />
                       <span className="text-white font-medium">{subject}</span>
                     </label>
                   ))}
@@ -512,6 +619,7 @@ function ApplicationSection() {
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">Previous Teaching/Tutoring Experience</label>
                 <textarea 
+                  name="experience"
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 h-24 resize-none transition-all duration-200"
                   placeholder="Describe any previous teaching, tutoring, or mentoring experience..."
                 />
@@ -523,7 +631,7 @@ function ApplicationSection() {
               <h3 className="text-2xl font-light text-white border-b border-white/10 pb-3">Availability</h3>
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">How many hours per week can you commit?</label>
-                <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200">
+                <select name="availabilityHours" required className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 transition-all duration-200">
                   <option value="">Select hours per week</option>
                   <option value="2-4">2-4 hours</option>
                   <option value="5-7">5-7 hours</option>
@@ -534,6 +642,8 @@ function ApplicationSection() {
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">Why do you want to volunteer as a tutor?</label>
                 <textarea 
+                  name="motivation"
+                  required
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/30 h-32 resize-none transition-all duration-200"
                   placeholder="Tell us about your motivation to help students and make a difference..."
                 />
@@ -544,13 +654,84 @@ function ApplicationSection() {
             <div className="pt-6 border-t border-white/10">
               <button 
                 type="submit"
-                className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-8 py-4 text-lg font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
+                disabled={isSubmitting}
+                className="w-full rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 px-8 py-4 text-lg font-medium tracking-tight text-white backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Application
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Submitting...</span>
+                  </div>
+                ) : (
+                  'Submit Application'
+                )}
               </button>
             </div>
           </div>
         </form>
+          </>
+        )}
+        
+        {/* Success Message */}
+        {submitSuccess && (
+          <div ref={successRef} className="w-full max-w-3xl text-center space-y-8">
+            <div className="flex justify-center">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            <h2 className="text-4xl font-extralight leading-[1.05] tracking-tight text-white sm:text-5xl">
+              Application Submitted Successfully!
+            </h2>
+
+            <div className="space-y-6 max-w-2xl mx-auto">
+              <p className="text-lg font-light leading-relaxed tracking-tight text-white/75 sm:text-xl">
+                Thank you for your interest in volunteering with The Integrator Project! Your application has been received.
+              </p>
+              
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+                <h3 className="text-xl font-light text-white">What happens next?</h3>
+                <ul className="space-y-3 text-white/75 font-light text-left">
+                  <li className="flex items-start space-x-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-sm text-white/80 mt-0.5">1</span>
+                    <span>Our team will review your application within 2-3 business days</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-sm text-white/80 mt-0.5">2</span>
+                    <span>If selected, we'll contact you to schedule an interview and subject assessment</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-sm text-white/80 mt-0.5">3</span>
+                    <span>Complete our online training program to learn tutoring best practices</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <span className="flex-shrink-0 w-6 h-6 bg-white/10 rounded-full flex items-center justify-center text-sm text-white/80 mt-0.5">4</span>
+                    <span>Get matched with students and start making a difference!</span>
+                  </li>
+                </ul>
+              </div>
+
+              <p className="text-base font-light text-white/60">
+                Questions? Contact us at{' '}
+                <a href="mailto:Luca@integratorproject.org" className="text-white/80 hover:text-white transition-colors underline">
+                  Luca@integratorproject.org
+                </a>
+              </p>
+
+              <div className="pt-8">
+                <Link 
+                  href="/"
+                  className="inline-flex items-center justify-center px-8 py-3 rounded-2xl border border-white/30 bg-gradient-to-r from-white/10 to-white/5 text-white font-medium tracking-tight backdrop-blur-sm transition-all duration-300 hover:from-white/20 hover:to-white/10 hover:border-white/40 hover:shadow-lg hover:shadow-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
+                >
+                  Return to Home
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

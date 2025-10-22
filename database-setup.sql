@@ -47,10 +47,45 @@ CREATE TABLE IF NOT EXISTS tutor_applications (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 
+-- Create contact submissions table
+CREATE TABLE IF NOT EXISTS contact_submissions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  firstName TEXT NOT NULL,
+  lastName TEXT NOT NULL,
+  email TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create volunteer applications table
+CREATE TABLE IF NOT EXISTS volunteer_applications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  firstName TEXT NOT NULL,
+  lastName TEXT NOT NULL,
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  educationLevel TEXT NOT NULL,
+  subjects TEXT[] NOT NULL DEFAULT '{}',
+  experience TEXT,
+  availabilityHours TEXT NOT NULL,
+  motivation TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+  reviewed_by UUID REFERENCES profiles(id),
+  reviewed_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
+);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE student_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tutor_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE volunteer_applications ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles
 CREATE POLICY "Users can view their own profile" ON profiles
@@ -90,6 +125,33 @@ CREATE POLICY "Tutors can create their own applications" ON tutor_applications
   FOR INSERT WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "Admin can view all tutor applications" ON tutor_applications
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Create policies for contact submissions
+CREATE POLICY "Anyone can create contact submissions" ON contact_submissions
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Admin can view all contact submissions" ON contact_submissions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Create policies for volunteer applications
+CREATE POLICY "Anyone can create volunteer applications" ON volunteer_applications
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Volunteers can view their own applications" ON volunteer_applications
+  FOR SELECT USING (user_id = auth.uid());
+
+CREATE POLICY "Admin can view all volunteer applications" ON volunteer_applications
   FOR ALL USING (
     EXISTS (
       SELECT 1 FROM profiles 
@@ -163,6 +225,10 @@ CREATE TRIGGER update_student_applications_updated_at
 
 CREATE TRIGGER update_tutor_applications_updated_at
   BEFORE UPDATE ON tutor_applications
+  FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+
+CREATE TRIGGER update_volunteer_applications_updated_at
+  BEFORE UPDATE ON volunteer_applications
   FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
 
 CREATE TRIGGER update_student_tutor_assignments_updated_at
